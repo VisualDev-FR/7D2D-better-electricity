@@ -13,7 +13,7 @@ public class ItemActionDisconnectPowerV2 : ItemAction
         public MyInventoryData(ItemInventoryData _invData, int _indexInEntityOfAction) : base(_invData, _indexInEntityOfAction) { }
     }
 
-    public ItemActionWiringData GetWiringData(ItemActionData _actionData) => _actionData.invData.holdingEntity.inventory.holdingItemData.actionData[1] as ItemActionWiringData;
+    public ItemActionWiringData GetWiringData(ItemActionData _actionData) => _actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0] as ItemActionWiringData;
 
     public override ItemActionData CreateModifierData(ItemInventoryData _invData, int _indexInEntityOfAction)
     {
@@ -63,7 +63,7 @@ public class ItemActionDisconnectPowerV2 : ItemAction
         ItemInventoryData invData = _actionData.invData;
         _ = invData.hitInfo.lastBlockPos;
         Vector3i blockPos = _actionData.invData.hitInfo.hit.blockPos;
-        if (!invData.hitInfo.bHitValid || invData.hitInfo.tag.StartsWith("E_") || ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[1]).DisconnectWire((ItemActionWiringData)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[1]) || !myInventoryData.invData.world.CanPlaceBlockAt(blockPos, myInventoryData.invData.world.gameManager.GetPersistentLocalPlayer()))
+        if (!invData.hitInfo.bHitValid || invData.hitInfo.tag.StartsWith("E_") || ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[0]).DisconnectWire((ItemActionWiringData)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0]) || !myInventoryData.invData.world.CanPlaceBlockAt(blockPos, myInventoryData.invData.world.gameManager.GetPersistentLocalPlayer()))
         {
             return;
         }
@@ -90,7 +90,7 @@ public class ItemActionDisconnectPowerV2 : ItemAction
         }
         else
         {
-            ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[1]).DisconnectWire((ItemActionWiringData)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[1]);
+            ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[0]).DisconnectWire((ItemActionWiringData)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0]);
         }
     }
 

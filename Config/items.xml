@@ -25,12 +25,12 @@
             <property name="RepairExpMultiplier" value="5.5" />
 
             <property class="Action0">
-                <property name="Class" value="DisconnectPowerV2, BetterElectricity" />
+                <property name="Class" value="ConnectPowerV2, BetterElectricity" />
+                <property name="WireOffset" value="-.2,-.1,-.1" />
             </property>
 
             <property class="Action1">
-                <property name="Class" value="ConnectPowerV2, BetterElectricity" />
-                <property name="WireOffset" value="-.2,-.1,-.1" />
+                <property name="Class" value="DisconnectPowerV2, BetterElectricity" />
             </property>
 
             <effect_group name="meleeToolBetterElectricity" tiered="false">

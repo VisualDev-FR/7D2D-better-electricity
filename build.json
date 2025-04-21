@@ -1,14 +1,19 @@
 {
-    "name": "better-electricity",
+    "name": "BetterElectricity",
     "csproj": "better-electricity.csproj",
     "include": [
         "ModInfo.xml",
+        "ModConfig.xml",
         "Config",
         "UIAtlases",
         "Resources",
         "Prefabs"
     ],
-    "prefabs": [],
-    "dependencies": [],
+    "prefabs": [
+        "BetterElectricity/*.*"
+    ],
+    "dependencies": [
+        "../7D2D-mod-utils"
+    ],
     "clear_saves": []
 }

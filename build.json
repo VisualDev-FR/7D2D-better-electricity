@@ -1,0 +1,14 @@
+{
+    "name": "better-electricity",
+    "csproj": "better-electricity.csproj",
+    "include": [
+        "ModInfo.xml",
+        "Config",
+        "UIAtlases",
+        "Resources",
+        "Prefabs"
+    ],
+    "prefabs": [],
+    "dependencies": [],
+    "clear_saves": []
+}

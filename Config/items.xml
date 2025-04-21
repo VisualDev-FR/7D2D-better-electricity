@@ -1,0 +1,45 @@
+<config>
+
+    <append xpath="/items">
+
+        <item name="meleeToolBetterElectricity">
+
+            <property name="CustomIcon" value="meleeToolWireTool" />
+            <property name="Tags" value="tool,noMods,electricianSkill" />
+            <property name="HoldType" value="52" />
+            <property name="Meshfile" value="@:Other/Items/Tools/wire_strippersPrefab.prefab" />
+            <property name="Material" value="Mmetal" />
+            <property name="CustomIconTint" value="200, 0, 0" />
+            <property name="ScrapTimeOverride" value="10.0" />
+            <property name="DegradationBreaksAfter" value="false" />
+            <property name="SoundJammed" value="ItemNeedsRepair" />
+            <property name="SoundDestroy" value="metaldestroy1" />
+            <property name="EconomicValue" value="200" />
+            <property name="TraderStageTemplate" value="baseTier0" />
+            <property name="Stacknumber" value="1" />
+            <property name="SoundUnholster" value="weapon_unholster" />
+            <property name="SoundHolster" value="weapon_holster" />
+            <property name="SoundPickup" value="wiretool_grab" />
+            <property name="SoundPlace" value="wiretool_place" />
+            <property name="Group" value="Tools/Traps" />
+            <property name="RepairExpMultiplier" value="5.5" />
+
+            <property class="Action0">
+                <property name="Class" value="DisconnectPowerV2, BetterElectricity" />
+            </property>
+
+            <property class="Action1">
+                <property name="Class" value="ConnectPowerV2, BetterElectricity" />
+                <property name="WireOffset" value="-.2,-.1,-.1" />
+            </property>
+
+            <effect_group name="meleeToolBetterElectricity" tiered="false">
+                <passive_effect name="ModSlots" operation="base_set" value="0" />
+                <passive_effect name="BlockRange" operation="base_set" value="4" />
+            </effect_group>
+
+        </item>
+
+    </append>
+
+</config>

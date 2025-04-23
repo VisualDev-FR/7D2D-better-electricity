@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
-
 public class ItemActionSpawnElectricalComponent : ItemAction
 {
     private static readonly Logging.Logger logger = Logging.CreateLogger<ItemActionSpawnElectricalComponent>();
@@ -78,6 +76,9 @@ public class ItemActionSpawnElectricalComponent : ItemAction
 
     public void UpdatePreview(ItemActionDataSpawnEletricalComponent actionData, bool updateRotation)
     {
+        if (actionData.transform  == null || actionData.transform.gameObject == null)
+            return;
+
         var world = actionData.invData.world;
         var lookRay = actionData.invData.holdingEntity.GetLookRay();
 

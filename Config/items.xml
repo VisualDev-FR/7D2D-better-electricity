@@ -68,8 +68,7 @@
             <property name="FilterTags" value="MC_building,SC_electrical" />
             -->
 
-            <property name="CustomIcon" value="powerSwitch01" />
-            <property name="CustomIconTint" value="200, 0, 0" />
+            <property name="CustomIcon" value="belec_powerswitch_01" />
             <property name="Tags" value="turretMelee,melee,weapon,blunt,longShaft,attIntellect,perkTurrets,canHaveCosmetic,roboticsSkill,meleeIntellect" />
             <property name="DisplayType" value="meleeTurret" />
             <property name="Meshfile" value="#@modfolder:Resources/Components.unity3d?PowerSwitch01" />

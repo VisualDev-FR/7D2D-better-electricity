@@ -8,6 +8,8 @@ public class ElectricalComponentInstance
 
     private Transform NodeTransform { get; set; }
 
+    public string ComponentName => Component.Name;
+
     public Quaternion Rotation
     {
         get => Transform.rotation;
@@ -57,6 +59,18 @@ public class ElectricalComponentInstance
     public void SetActive(bool value) => Transform.gameObject.SetActive(value);
 
     public bool IsActive() => Transform.gameObject.activeSelf;
+
+    public bool NodeVisible() => NodeTransform.gameObject.activeSelf;
+
+    public bool IsLookedByPlayer(EntityPlayer player)
+    {
+        if (Physics.Raycast(player.GetLookRay(), out var hit, 4f))
+        {
+            return hit.collider.transform.IsChildOf(Transform);
+        }
+
+        return false;
+    }
 
     public void Cleanup()
     {

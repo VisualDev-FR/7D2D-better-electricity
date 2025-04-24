@@ -79,13 +79,17 @@ public class ItemActionConnectPowerV2 : ItemAction
 
     public override void OnHoldingUpdate(ItemActionData _actionData)
     {
-        if (!(_actionData is ItemActionWiringData connectPowerData))
+        if (!(_actionData is ItemActionWiringData actionData))
             return;
 
-        if (!connectPowerData.IsWiring)
+        if (actionData.invData.holdingEntity is EntityPlayer player)
+            ElectricalComponentManager.Instance.UpdateNodeVisibility(player);
+
+        if (!actionData.IsWiring)
             return;
 
-        connectPowerData.UpdateHitPos();
+        actionData.UpdateHitPos();
+
     }
 
     public Transform GetHandTransform(EntityAlive holdingEntity)

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ItemActionDataSpawnEletricalComponent : ItemActionAttackData
 {
-    public Transform transform;
+    public ElectricalComponentInstance component { get; set; }
 
     public Renderer[] PreviewRenderers;
 

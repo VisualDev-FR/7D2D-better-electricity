@@ -14,8 +14,6 @@ public class ElectricalComponentManager
 
     private readonly List<ElectricalComponentInstance> spawnedComponents = new List<ElectricalComponentInstance>();
 
-    public ElectricalComponentManager() { }
-
     public ElectricalComponent GetComponent(string name)
     {
         return nameToComponent[name];
@@ -24,6 +22,7 @@ public class ElectricalComponentManager
     public static void LoadComponents()
     {
         Instance.Cleanup();
+        Instance.nameToComponent.Clear();
 
         var modPath = ModManager.GetMod(Config.modName).Path;
         var xmlPath = Path.GetFullPath(modPath + "/Config/electricalcomponents.xml");

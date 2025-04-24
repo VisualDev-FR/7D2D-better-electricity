@@ -27,6 +27,6 @@ public static class UnityUtils
                 return child;
         }
 
-        return null;
+        throw new System.Exception($"No transform found with name '{name}'");
     }
 }

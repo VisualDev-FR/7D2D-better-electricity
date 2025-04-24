@@ -1,4 +1,1 @@
-public class ElectricalComponentPowerSwitch : ElectricalComponent
-{
-
-}
+public class ElectricalComponentPowerSwitch : ElectricalComponent { }

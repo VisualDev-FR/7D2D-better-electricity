@@ -42,7 +42,7 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
                 break;
 
             default:
-                logger.Error($"Invalid or not implemented command: '{_params[0]}'");
+                logger.Error($"Invalid command: '{_params[0]}'");
                 break;
         }
     }

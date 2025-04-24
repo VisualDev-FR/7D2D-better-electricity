@@ -24,8 +24,7 @@ public class ElectricalComponentFromXml
         var name = node.Attribute("name").Value;
         var properties = ParseProperties(node);
         var type = Type.GetType(properties.Values["Class"]);
-        var instance = Activator.CreateInstance(type);
-        var component = instance as ElectricalComponent;
+        var component = Activator.CreateInstance(type) as ElectricalComponent;
 
         component.Name = name;
         component.Init(properties);

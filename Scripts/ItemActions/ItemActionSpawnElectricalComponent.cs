@@ -56,35 +56,21 @@ public class ItemActionSpawnElectricalComponent : ItemAction
     {
         var actionData = _actionData as ItemActionDataSpawnEletricalComponent;
 
-        if (!(actionData.invData.holdingEntity is EntityPlayerLocal entityPlayerLocal))
-            return;
+        if (actionData.component != null)
+            actionData.component.Cleanup();
 
-        if (actionData.transform != null)
-            Object.DestroyImmediate(actionData.transform.gameObject);
+        var gameObject = DataLoader.LoadAsset<GameObject>(item.MeshFile);
+        var transform = Object.Instantiate(gameObject).transform;
 
-
-        GameObject original = DataLoader.LoadAsset<GameObject>(entityPlayerLocal.inventory.holdingItem.MeshFile);
-
-        actionData.transform = Object.Instantiate(original).transform;
-        actionData.transform.gameObject.SetActive(false);
+        actionData.component = new ElectricalComponentInstance(item.Name, transform);
+        actionData.component.ShowNodes(false);
 
         UpdatePreview(actionData, true);
-        SetConnectionsActive(actionData, false);
-    }
-
-    private void SetConnectionsActive(ItemActionDataSpawnEletricalComponent actionData, bool visible)
-    {
-        var connectorsTransform = UnityUtils.FindByName(actionData.transform, propConnectors);
-
-        if (connectorsTransform != null)
-        {
-            connectorsTransform.gameObject.SetActive(visible);
-        }
     }
 
     private void UpdatePreview(ItemActionDataSpawnEletricalComponent actionData, bool updateRotation)
     {
-        if (actionData.transform == null || actionData.transform.gameObject == null)
+        if (actionData.component is null || actionData.component.HasNullTransform())
             return;
 
         var world = actionData.invData.world;
@@ -92,7 +78,7 @@ public class ItemActionSpawnElectricalComponent : ItemAction
 
         if (!Voxel.Raycast(world, lookRay, 10f, 8454144, 69, 0f))
         {
-            actionData.transform.gameObject.SetActive(false);
+            actionData.component.SetActive(false);
             return;
         }
 
@@ -101,36 +87,39 @@ public class ItemActionSpawnElectricalComponent : ItemAction
         var faceNormal = RayCastUtils.GetFaceNormal(hitInfo);
 
         if (updateRotation || actionData.blockFace != hitInfo.hit.blockFace)
-            actionData.transform.rotation = Quaternion.FromToRotation(Vector3.up, faceNormal);
+            actionData.component.Rotation = Quaternion.FromToRotation(Vector3.up, faceNormal);
 
         TryRotatePreview(actionData);
 
-        actionData.transform.position = hitPosition;
-        actionData.transform.gameObject.SetActive(true);
         actionData.blockFace = hitInfo.hit.blockFace;
+        actionData.component.Position = hitPosition;
+        actionData.component.SetActive(true);
     }
 
     private void TryRotatePreview(ItemActionDataSpawnEletricalComponent actionData)
     {
         if (Input.GetKey(KeyCode.R) && Time.time - actionData.lastRotation > rotationDelay)
         {
-            actionData.transform.Rotate(Vector3.up, 90f);
+            actionData.component.Rotate(Vector3.up, 90f);
             actionData.lastRotation = Time.time;
         }
     }
 
     public override void StopHolding(ItemActionData _actionData)
     {
-        ItemActionDataSpawnEletricalComponent itemActionDataSpawnTurret = (ItemActionDataSpawnEletricalComponent)_actionData;
-        if (itemActionDataSpawnTurret.transform != null && itemActionDataSpawnTurret.invData.holdingEntity is EntityPlayerLocal)
+        var actionData = _actionData as ItemActionDataSpawnEletricalComponent;
+        if (!actionData.component.HasNullTransform() && actionData.invData.holdingEntity is EntityPlayerLocal)
         {
-            Object.Destroy(itemActionDataSpawnTurret.transform.gameObject);
+            actionData.component.Cleanup();
         }
     }
 
     public override void OnHoldingUpdate(ItemActionData _actionData)
     {
-        UpdatePreview(_actionData as ItemActionDataSpawnEletricalComponent, false);
+        if (!(_actionData is ItemActionDataSpawnEletricalComponent actionData))
+            return;
+
+        UpdatePreview(actionData, false);
     }
 
     public override void ExecuteAction(ItemActionData _actionData, bool _bReleased)
@@ -141,16 +130,16 @@ public class ItemActionSpawnElectricalComponent : ItemAction
         if (!(_actionData is ItemActionDataSpawnEletricalComponent actionData))
             return;
 
-        if (actionData.transform == null || actionData.transform.gameObject == null)
+        if (actionData.component.HasNullTransform() || !actionData.component.IsActive())
             return;
 
-        var gameObject = Object.Instantiate(actionData.transform.gameObject);
-        var component = new ElectricalComponentInstance(actionData.invData.item.Name, gameObject.transform);
-
-        ElectricalComponentManager.Instance.SpawnComponent(component);
+        ElectricalComponentManager.Instance.SpawnComponent(actionData.component.Clone());
 
         actionData.invData.itemStack.count--;
         actionData.invData.Changed();
+
+        if (actionData.invData.itemStack.count == 0)
+            StopHolding(actionData);
     }
 
 }

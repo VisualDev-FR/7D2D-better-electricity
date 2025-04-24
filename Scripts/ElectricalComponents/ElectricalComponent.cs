@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-public class ElectricalComponent
+public abstract class ElectricalComponent
 {
     public class Node
     {
@@ -22,12 +22,12 @@ public class ElectricalComponent
 
     public readonly List<Node> nodes = new List<Node>();
 
-    public void Init(DynamicProperties properties)
+    public virtual void Init(DynamicProperties properties)
     {
         PowerLoss = properties.GetInt("PowerLoss");
     }
 
-    public void CreateNode(XElement element)
+    public virtual void CreateNode(XElement element)
     {
         var connector = new Node()
         {
@@ -38,4 +38,8 @@ public class ElectricalComponent
 
         nodes.Add(connector);
     }
+
+    public virtual void OnSpawn(ElectricalComponentInstance instance) { }
+
+    public virtual void OnPickup(ElectricalComponentInstance instance) { }
 }

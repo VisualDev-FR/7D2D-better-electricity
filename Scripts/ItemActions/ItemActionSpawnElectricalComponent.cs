@@ -1,4 +1,4 @@
-# pragma warning disable IDE0019
+# pragma warning disable IDE0019, IDE0031
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +11,8 @@ public class ItemActionSpawnElectricalComponent : ItemAction
     public const int cColliderMask = 28901376;
 
     public const float rotationDelay = 0.2f;
+
+    public const string propConnectors = "Connectors";
 
     public string entityToSpawn;
 
@@ -53,30 +55,36 @@ public class ItemActionSpawnElectricalComponent : ItemAction
     public override void StartHolding(ItemActionData _actionData)
     {
         var actionData = _actionData as ItemActionDataSpawnEletricalComponent;
-        var entityPlayerLocal = actionData.invData.holdingEntity as EntityPlayerLocal;
 
-        if (entityPlayerLocal is null)
+        if (!(actionData.invData.holdingEntity is EntityPlayerLocal entityPlayerLocal))
             return;
 
         if (actionData.transform != null)
             Object.DestroyImmediate(actionData.transform.gameObject);
+
 
         GameObject original = DataLoader.LoadAsset<GameObject>(entityPlayerLocal.inventory.holdingItem.MeshFile);
 
         actionData.transform = Object.Instantiate(original).transform;
         actionData.transform.gameObject.SetActive(false);
 
-        foreach (var collider in actionData.transform.GetComponents<Collider>())
-        {
-            collider.enabled = false;
-        }
-
         UpdatePreview(actionData, true);
+        SetConnectionsActive(actionData, false);
     }
 
-    public void UpdatePreview(ItemActionDataSpawnEletricalComponent actionData, bool updateRotation)
+    private void SetConnectionsActive(ItemActionDataSpawnEletricalComponent actionData, bool visible)
     {
-        if (actionData.transform  == null || actionData.transform.gameObject == null)
+        var connectorsTransform = UnityUtils.FindByName(actionData.transform, propConnectors);
+
+        if (connectorsTransform != null)
+        {
+            connectorsTransform.gameObject.SetActive(visible);
+        }
+    }
+
+    private void UpdatePreview(ItemActionDataSpawnEletricalComponent actionData, bool updateRotation)
+    {
+        if (actionData.transform == null || actionData.transform.gameObject == null)
             return;
 
         var world = actionData.invData.world;
@@ -125,6 +133,24 @@ public class ItemActionSpawnElectricalComponent : ItemAction
         UpdatePreview(_actionData as ItemActionDataSpawnEletricalComponent, false);
     }
 
-    public override void ExecuteAction(ItemActionData _actionData, bool _bReleased) { }
+    public override void ExecuteAction(ItemActionData _actionData, bool _bReleased)
+    {
+        if (!_bReleased || Time.time - _actionData.lastUseTime < Delay)
+            return;
+
+        if (!(_actionData is ItemActionDataSpawnEletricalComponent actionData))
+            return;
+
+        if (actionData.transform == null || actionData.transform.gameObject == null)
+            return;
+
+        var gameObject = Object.Instantiate(actionData.transform.gameObject);
+        var component = new ElectricalComponent(gameObject.transform);
+
+        ElectricalComponentManager.Instance.AddComponentToWorld(component);
+
+        actionData.invData.itemStack.count--;
+        actionData.invData.Changed();
+    }
 
 }

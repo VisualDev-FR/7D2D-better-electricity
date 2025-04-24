@@ -145,9 +145,9 @@ public class ItemActionSpawnElectricalComponent : ItemAction
             return;
 
         var gameObject = Object.Instantiate(actionData.transform.gameObject);
-        var component = new ElectricalComponent(gameObject.transform);
+        var component = new ElectricalComponentInstance(actionData.invData.item.Name, gameObject.transform);
 
-        ElectricalComponentManager.Instance.AddComponentToWorld(component);
+        ElectricalComponentManager.Instance.SpawnComponent(component);
 
         actionData.invData.itemStack.count--;
         actionData.invData.Changed();

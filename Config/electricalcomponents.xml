@@ -1,0 +1,15 @@
+<electricalcomponents>
+
+    <component name="belec_powerswitch_01">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <nodes>
+            <node name="input" type="input" />
+            <node name="output" type="output" />
+        </nodes>
+
+    </component>
+
+</electricalcomponents>

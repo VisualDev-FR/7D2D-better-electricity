@@ -1,7 +1,9 @@
-.vscode
-.vs
-obj
-build
+/.vscode
+/.vs
+/ignore
+/build
+/obj
+
 *.zip
 *.dll
 *.pdb

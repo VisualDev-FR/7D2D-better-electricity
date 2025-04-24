@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 
 public class ElectricalComponentManager
@@ -25,10 +24,8 @@ public class ElectricalComponentManager
         Instance.Cleanup();
         Instance.nameToComponent.Clear();
 
-        var modPath = ModManager.GetMod(Config.modName).Path;
-        var xmlPath = Path.GetFullPath(modPath + "/Config/electricalcomponents.xml");
-
-        logger.Debug($"start loading components");
+        var xmlPath = Path.GetFullPath(Config.ModPath + "/Config/electricalcomponents.xml");
+        var createdComponents = 0;
 
         using (var reader = new StreamReader(xmlPath))
         {
@@ -37,8 +34,11 @@ public class ElectricalComponentManager
             foreach (var component in ElectricalComponentFromXml.CreateComponents(xmlFile))
             {
                 Instance.nameToComponent[component.Name] = component;
+                createdComponents++;
             }
         }
+
+        logger.Info($"{createdComponents} electrical components created.");
     }
 
     public void SpawnComponent(ElectricalComponentInstance component)
@@ -61,17 +61,7 @@ public class ElectricalComponentManager
     {
         foreach (var component in spawnedComponents)
         {
-            bool lookedByPlayer = component.IsLookedByPlayer(player);
-            bool NodeVisible = component.NodeVisible();
-
-            if (lookedByPlayer && !NodeVisible)
-            {
-                component.ShowNodes(true);
-            }
-            else if (!lookedByPlayer && NodeVisible)
-            {
-                component.ShowNodes(false);
-            }
+            component.UpdateNodeVisibility(player);
         }
     }
 }

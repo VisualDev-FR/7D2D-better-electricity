@@ -72,6 +72,21 @@ public class ElectricalComponentInstance
         return false;
     }
 
+    public void UpdateNodeVisibility(EntityPlayer player)
+    {
+        bool lookedByPlayer = IsLookedByPlayer(player);
+        bool nodeVisible = NodeVisible();
+
+        if (lookedByPlayer && !nodeVisible)
+        {
+            ShowNodes(true);
+        }
+        else if (!lookedByPlayer && nodeVisible)
+        {
+            ShowNodes(false);
+        }
+    }
+
     public void Cleanup()
     {
         if (Transform != null && Transform.gameObject != null)

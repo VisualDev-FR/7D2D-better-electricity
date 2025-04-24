@@ -22,11 +22,11 @@ public class ItemActionWiringData : ItemActionAttackData
                 line.receiveShadows = false;
 
                 line.positionCount = 1;
-                line.startWidth = Config.lineWidth;
-                line.endWidth = Config.lineWidth;
+                line.startWidth = Config.wireRadius;
+                line.endWidth = Config.wireRadius;
                 line.material = new Material(Shader.Find("Sprites/Default"));
-                line.startColor = Config.lineColor;
-                line.endColor = Config.lineColor;
+                line.startColor = Config.wireColor;
+                line.endColor = Config.wireColor;
             }
 
             return line;

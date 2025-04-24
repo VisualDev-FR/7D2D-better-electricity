@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
 {
@@ -24,6 +25,16 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
         ElectricalComponentManager.Instance.Cleanup();
     }
 
+    private void CmdSpawnWire(string[] args)
+    {
+        var parent = GameManager.Instance.gameObject.transform;
+        var player = GameManager.Instance.World.GetPrimaryPlayer();
+        var start = player.GetLookRay().origin;
+        var end = start + player.GetLookVector() * 3;
+
+        WireBuilder.BuildWire(parent, start, end);
+    }
+
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {
         var args = _params.ToArray();
@@ -39,6 +50,10 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
             case "clearcomponents":
             case "cc":
                 CmdClearComponents();
+                break;
+
+            case "wire":
+                CmdSpawnWire(args);
                 break;
 
             default:

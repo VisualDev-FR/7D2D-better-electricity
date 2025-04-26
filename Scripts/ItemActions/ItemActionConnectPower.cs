@@ -5,10 +5,6 @@ public class ItemActionConnectPowerV2 : ItemAction
 {
     private static readonly Logging.Logger logger = Logging.CreateLogger<ItemActionConnectPowerV2>();
 
-    public Vector3 wireOffset = Vector3.zero;
-
-    public int maxWireLength = 15;
-
     public override ItemActionData CreateModifierData(ItemInventoryData _invData, int _indexInEntityOfAction)
     {
         return new ItemActionWiringData(_invData, _indexInEntityOfAction);
@@ -17,14 +13,6 @@ public class ItemActionConnectPowerV2 : ItemAction
     public override void ReadFrom(DynamicProperties _props)
     {
         base.ReadFrom(_props);
-        if (_props.Values.ContainsKey("WireOffset"))
-        {
-            wireOffset = StringParsers.ParseVector3(_props.Values["WireOffset"]);
-        }
-        if (_props.Values.ContainsKey("MaxWireLength"))
-        {
-            maxWireLength = StringParsers.ParseSInt32(_props.Values["MaxWireLength"]);
-        }
     }
 
     public override void StopHolding(ItemActionData _data)

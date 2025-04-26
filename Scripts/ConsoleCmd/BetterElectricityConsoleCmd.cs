@@ -27,12 +27,13 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
 
     private void CmdSpawnWire(string[] args)
     {
-        var parent = GameManager.Instance.gameObject.transform;
         var player = GameManager.Instance.World.GetPrimaryPlayer();
         var start = player.GetLookRay().origin;
         var end = start + player.GetLookVector() * 3;
 
-        WireBuilder.BuildWire(parent, start, end);
+        var wire = new ElectricalWire();
+        wire.Parent = GameManager.Instance.gameObject.transform;
+        wire.AddSection(start, end);
     }
 
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)

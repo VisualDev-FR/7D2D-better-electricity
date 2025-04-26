@@ -1,33 +1,63 @@
 using UnityEngine;
 
 
-public class WireBuilder
+public class ElectricalWireSection
 {
     private static int SegmentsCount => Config.wireSegments;
 
     private static float Radius => Config.wireRadius;
 
-    public static GameObject BuildWire(Transform parent, Vector3 start, Vector3 end)
+    private readonly Transform transform;
+
+    public readonly ElectricalWire Parent;
+
+    public readonly Vector3 start;
+
+    public readonly Vector3 end;
+
+    private MeshRenderer meshRenderer;
+
+    public Color Color
     {
-        var cylinder = new GameObject("Cylinder");
+        get => meshRenderer.material.color;
+        set => meshRenderer.material.color = value;
+    }
+
+    public bool IsActive
+    {
+        get => transform.gameObject.activeSelf;
+        set => transform.gameObject.SetActive(value);
+    }
+
+    public ElectricalWireSection(ElectricalWire parent, Vector3 start, Vector3 end)
+    {
+        this.start = start;
+        this.end = end;
+
+        transform = BuildCylinder(start, end);
+        transform.parent = parent.transform;
+    }
+
+    private Transform BuildCylinder(Vector3 start, Vector3 end)
+    {
+        var gameObject = new GameObject();
         var direction = end - start;
         var length = direction.magnitude;
 
-        var meshFilter = cylinder.AddComponent<MeshFilter>();
+        var meshFilter = gameObject.AddComponent<MeshFilter>();
         meshFilter.mesh = GenerateCylinderMesh(length);
 
-        var meshRenderer = cylinder.AddComponent<MeshRenderer>();
+        meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        meshRenderer.material.color = Color.black;
+        meshRenderer.material.color = Config.wireDefaultColor;
 
-        cylinder.transform.position = start;
-        cylinder.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
-        cylinder.transform.parent = parent;
+        gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
+        gameObject.transform.position = start;
 
-        return cylinder;
+        return gameObject.transform;
     }
 
-    private static Mesh GenerateCylinderMesh(float length)
+    private Mesh GenerateCylinderMesh(float length)
     {
         var mesh = new Mesh();
         var vertexCount = 2 * SegmentsCount + 2;
@@ -46,6 +76,7 @@ public class WireBuilder
 
         vertices[vertexCount - 2] = Vector3.zero;
         vertices[vertexCount - 1] = new Vector3(0, length, 0);
+
 
         int triIndex = 0;
 
@@ -81,4 +112,10 @@ public class WireBuilder
 
         return mesh;
     }
+
+    public void Cleanup()
+    {
+        Object.DestroyImmediate(transform.gameObject);
+    }
+
 }

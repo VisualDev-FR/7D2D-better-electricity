@@ -25,8 +25,8 @@ public class ItemActionWiringData : ItemActionAttackData
                 line.startWidth = Config.wireRadius;
                 line.endWidth = Config.wireRadius;
                 line.material = new Material(Shader.Find("Sprites/Default"));
-                line.startColor = Config.wireColor;
-                line.endColor = Config.wireColor;
+                line.startColor = Config.wirePreviewColor;
+                line.endColor = Config.wirePreviewColor;
             }
 
             return line;
@@ -113,8 +113,6 @@ public class ItemActionWiringData : ItemActionAttackData
 
     public void RemoveLastPoint()
     {
-        logger.Debug($"RemoveLastPoint, count: {points.Count}");
-
         if (points.Count == 0)
             return;
 
@@ -127,8 +125,4 @@ public class ItemActionWiringData : ItemActionAttackData
         UpdateHitPos();
     }
 
-    public override string ToString()
-    {
-        return base.ToString();
-    }
 }

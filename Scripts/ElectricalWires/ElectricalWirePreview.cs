@@ -24,7 +24,9 @@ public class ElectricalWirePreview
         if (line != null)
             return;
 
-        line = player.transform.gameObject.AddComponent<LineRenderer>();
+        var gameObject = new GameObject();
+
+        line = gameObject.AddComponent<LineRenderer>();
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         line.receiveShadows = false;
 
@@ -38,11 +40,27 @@ public class ElectricalWirePreview
 
     public void Cleanup()
     {
-        Object.DestroyImmediate(line);
+        Object.Destroy(line);
+    }
+
+    public void SetActive(bool value)
+    {
+        if (line.gameObject.activeSelf != value)
+        {
+            line.gameObject.SetActive(value);
+        }
     }
 
     public void Update(WorldRayHitInfo hitInfo)
     {
-        End = RayCastUtils.CalcHitPos(hitInfo);
+        if (hitInfo.bHitValid)
+        {
+            End = RayCastUtils.CalcHitPos(hitInfo);
+            SetActive(true);
+        }
+        else
+        {
+            SetActive(false);
+        }
     }
 }

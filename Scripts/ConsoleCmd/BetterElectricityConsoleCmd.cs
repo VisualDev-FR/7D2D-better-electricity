@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UnityEngine;
+
 
 public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
 {
@@ -20,12 +20,11 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
         return base.getHelp();
     }
 
-    private void CmdClearComponents()
-    {
-        ElectricalComponentManager.Instance.Cleanup();
-    }
+    private void CmdClearComponents() => ElectricalComponentManager.Instance.Cleanup();
 
-    private void CmdSpawnWire(string[] args)
+    private void CmdClearWires() => ElectricalWireManager.Instance.Cleanup();
+
+    private void CmdSpawnWire()
     {
         var player = GameManager.Instance.World.GetPrimaryPlayer();
         var start = player.GetLookRay().origin;
@@ -53,8 +52,13 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
                 CmdClearComponents();
                 break;
 
+            case "clearwires":
+            case "cw":
+                CmdClearWires();
+                break;
+
             case "wire":
-                CmdSpawnWire(args);
+                CmdSpawnWire();
                 break;
 
             default:

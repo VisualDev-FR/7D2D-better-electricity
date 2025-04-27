@@ -13,6 +13,16 @@ public class ElectricalWire
         set => transform.parent = value;
     }
 
+    public int SectionsCount => sections.Count;
+
+    public Vector3 GetLastPoint()
+    {
+        if (sections.Count == 0)
+            return Vector3.zero;
+
+        return sections[sections.Count - 1].end;
+    }
+
     public void AddSection(Vector3 start, Vector3 end)
     {
         sections.Add(new ElectricalWireSection(this, start, end));
@@ -32,6 +42,6 @@ public class ElectricalWire
 
     public void Cleanup()
     {
-        Object.DestroyImmediate(transform.gameObject);
+        Object.Destroy(transform.gameObject);
     }
 }

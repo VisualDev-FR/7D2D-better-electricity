@@ -1,18 +1,8 @@
-using UnityEngine;
-
 public class ItemActionDataSpawnEletricalComponent : ItemActionAttackData
 {
     public ElectricalComponentInstance component { get; set; }
 
-    public Renderer[] PreviewRenderers;
-
-    public bool ValidPosition;
-
-    public Vector3 Position;
-
-    public bool Placing;
-
-    public float lastRotation;
+    public float lastRotationTime;
 
     public BlockFace blockFace = BlockFace.None;
 

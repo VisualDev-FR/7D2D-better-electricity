@@ -17,14 +17,15 @@ public class ItemActionConnectPowerV2 : ItemAction
         var actionData = _data as ItemActionDataConnectPower;
         var player = actionData.invData.holdingEntity as EntityPlayer;
 
-        actionData.wirePreview = new ElectricalWirePreview(player);
         actionData.wire = new ElectricalWire();
+        actionData.wirePreview = new ElectricalWirePreview(player);
     }
 
     public override void StopHolding(ItemActionData _data)
     {
         var actionData = _data as ItemActionDataConnectPower;
 
+        actionData.IsWiring = false;
         actionData.wirePreview.Cleanup();
     }
 
@@ -81,8 +82,10 @@ public class ItemActionConnectPowerV2 : ItemAction
 
     private void StartWiring(ItemActionDataConnectPower actionData)
     {
-        actionData.wirePreview.Start = RayCastUtils.CalcHitPos(actionData.invData.hitInfo, Config.wireOffset);
         actionData.IsWiring = true;
+        actionData.wirePreview.Start = RayCastUtils.CalcHitPos(actionData.invData.hitInfo, Config.wireOffset);
+        actionData.wirePreview.Update(actionData.invData.hitInfo);
+        actionData.wirePreview.SetActive(true);
     }
 
     private void AddWiringNode(ItemActionDataConnectPower actionData)
@@ -92,10 +95,37 @@ public class ItemActionConnectPowerV2 : ItemAction
         actionData.wire.AddSection(actionData.wirePreview.Start, hitPos);
         actionData.wirePreview.Start = hitPos;
         actionData.IsWiring = true;
+
+        if (InputUtils.ShiftKeyPressed)
+        {
+            ValidateWire(actionData);
+            return;
+        }
+    }
+
+    public void ValidateWire(ItemActionDataConnectPower actionData)
+    {
+        ElectricalWireManager.Instance.RegisterWire(actionData.wire);
+
+        actionData.IsWiring = false;
+        actionData.wire = new ElectricalWire();
+
+
+        actionData.wirePreview.SetActive(false);
     }
 
     public void RemoveLastSection(ItemActionDataConnectPower actionData)
     {
+        actionData.wire.RemoveLast();
 
+        if (actionData.wire.SectionsCount > 0)
+        {
+            actionData.wirePreview.Start = actionData.wire.GetLastPoint();
+        }
+        else
+        {
+            actionData.IsWiring = false;
+            actionData.wirePreview.SetActive(false);
+        }
     }
 }

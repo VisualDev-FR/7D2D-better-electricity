@@ -115,7 +115,7 @@ public class ElectricalWireSection
 
     public void Cleanup()
     {
-        Object.DestroyImmediate(transform.gameObject);
+        Object.Destroy(transform.gameObject);
     }
 
 }

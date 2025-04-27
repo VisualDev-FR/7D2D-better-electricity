@@ -91,7 +91,7 @@ public class ElectricalComponentInstance
     {
         if (Transform != null && Transform.gameObject != null)
         {
-            Object.DestroyImmediate(Transform.gameObject);
+            Object.Destroy(Transform.gameObject);
         }
 
         Transform = null;

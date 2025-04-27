@@ -98,10 +98,10 @@ public class ItemActionSpawnElectricalComponent : ItemAction
 
     private void TryRotatePreview(ItemActionDataSpawnEletricalComponent actionData)
     {
-        if (Input.GetKey(KeyCode.R) && Time.time - actionData.lastRotation > rotationDelay)
+        if (Input.GetKey(KeyCode.R) && Time.time - actionData.lastRotationTime > rotationDelay)
         {
             actionData.component.Rotate(Vector3.up, 90f);
-            actionData.lastRotation = Time.time;
+            actionData.lastRotationTime = Time.time;
         }
     }
 

@@ -13,16 +13,13 @@ public class ItemActionDisconnectPowerV2 : ItemAction
         public MyInventoryData(ItemInventoryData _invData, int _indexInEntityOfAction) : base(_invData, _indexInEntityOfAction) { }
     }
 
-    public ItemActionWiringData GetWiringData(ItemActionData _actionData) => _actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0] as ItemActionWiringData;
+    public ItemActionDataConnectPower GetItemActionDataConnectPower(ItemActionData _actionData) => _actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0] as ItemActionDataConnectPower;
+
+    public ItemActionConnectPowerV2 GetItemActionConnectPowerV2(ItemActionData _actionData) => _actionData.invData.holdingEntity.inventory.holdingItem.Actions[0] as ItemActionConnectPowerV2;
 
     public override ItemActionData CreateModifierData(ItemInventoryData _invData, int _indexInEntityOfAction)
     {
         return new MyInventoryData(_invData, _indexInEntityOfAction);
-    }
-
-    public override void ReadFrom(DynamicProperties _props)
-    {
-        base.ReadFrom(_props);
     }
 
     public override void StopHolding(ItemActionData _data)
@@ -37,7 +34,10 @@ public class ItemActionDisconnectPowerV2 : ItemAction
             _actionData.lastUseTime = Time.time;
             ((MyInventoryData)_actionData).StartDisconnect = true;
 
-            GetWiringData(_actionData).RemoveLastPoint();
+            var itemAction = GetItemActionConnectPowerV2(_actionData);
+            var itemActionData = GetItemActionDataConnectPower(_actionData);
+
+            itemAction.RemoveLastSection(itemActionData);
         }
     }
 
@@ -63,7 +63,7 @@ public class ItemActionDisconnectPowerV2 : ItemAction
         ItemInventoryData invData = _actionData.invData;
         _ = invData.hitInfo.lastBlockPos;
         Vector3i blockPos = _actionData.invData.hitInfo.hit.blockPos;
-        if (!invData.hitInfo.bHitValid || invData.hitInfo.tag.StartsWith("E_") || ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[0]).DisconnectWire((ItemActionWiringData)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0]) || !myInventoryData.invData.world.CanPlaceBlockAt(blockPos, myInventoryData.invData.world.gameManager.GetPersistentLocalPlayer()))
+        if (!invData.hitInfo.bHitValid || invData.hitInfo.tag.StartsWith("E_") || ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[0]).DisconnectWire((ItemActionDataConnectPower)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0]) || !myInventoryData.invData.world.CanPlaceBlockAt(blockPos, myInventoryData.invData.world.gameManager.GetPersistentLocalPlayer()))
         {
             return;
         }
@@ -90,7 +90,7 @@ public class ItemActionDisconnectPowerV2 : ItemAction
         }
         else
         {
-            ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[0]).DisconnectWire((ItemActionWiringData)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0]);
+            ((ItemActionConnectPowerV2)_actionData.invData.holdingEntity.inventory.holdingItem.Actions[0]).DisconnectWire((ItemActionDataConnectPower)_actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0]);
         }
     }
 

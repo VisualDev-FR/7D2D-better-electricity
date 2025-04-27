@@ -18,4 +18,14 @@ public static class RayCastUtils
         return faceToNormal[hitInfo.hit.blockFace];
     }
 
+    public static Vector3 CalcHitPos(WorldRayHitInfo hitInfo, float offset = 0)
+    {
+        if (!hitInfo.bHitValid)
+        {
+            return Vector3.zero;
+        }
+
+        return hitInfo.hit.pos + faceToNormal[hitInfo.hit.blockFace] * offset;
+    }
+
 }

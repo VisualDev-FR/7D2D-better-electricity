@@ -25,8 +25,7 @@ public class ItemActionConnectPowerV2 : ItemAction
     {
         var actionData = _data as ItemActionDataConnectPower;
 
-        actionData.IsWiring = false;
-        actionData.wirePreview.Cleanup();
+        StopWiring(actionData, true);
     }
 
     public override void OnHoldingUpdate(ItemActionData _actionData)
@@ -88,6 +87,21 @@ public class ItemActionConnectPowerV2 : ItemAction
         actionData.wirePreview.SetActive(true);
     }
 
+    public void StopWiring(ItemActionDataConnectPower actionData, bool cleanupPreview)
+    {
+        actionData.IsWiring = false;
+        actionData.wire.RemoveAll();
+
+        if (cleanupPreview)
+        {
+            actionData.wirePreview.Cleanup();
+        }
+        else
+        {
+            actionData.wirePreview.SetActive(false);
+        }
+    }
+
     private void AddWiringNode(ItemActionDataConnectPower actionData)
     {
         var hitPos = RayCastUtils.CalcHitPos(actionData.invData.hitInfo, Config.wireOffset);
@@ -105,22 +119,19 @@ public class ItemActionConnectPowerV2 : ItemAction
 
     public void ValidateWire(ItemActionDataConnectPower actionData)
     {
-        ElectricalWireManager.Instance.RegisterWire(actionData.wire);
+        ElectricalWireManager.Instance.AddWire(actionData.wire);
 
         actionData.IsWiring = false;
         actionData.wire = new ElectricalWire();
-
-
         actionData.wirePreview.SetActive(false);
     }
 
-    public void RemoveLastSection(ItemActionDataConnectPower actionData)
+    public void RemoveLastPoint(ItemActionDataConnectPower actionData)
     {
-        actionData.wire.RemoveLast();
-
         if (actionData.wire.SectionsCount > 0)
         {
-            actionData.wirePreview.Start = actionData.wire.GetLastPoint();
+            actionData.wirePreview.Start = actionData.wire.GetLastSection().StartPos;
+            actionData.wire.RemoveLast();
         }
         else
         {

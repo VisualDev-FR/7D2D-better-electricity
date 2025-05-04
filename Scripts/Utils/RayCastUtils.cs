@@ -28,4 +28,14 @@ public static class RayCastUtils
         return hitInfo.hit.pos + faceToNormal[hitInfo.hit.blockFace] * offset;
     }
 
+    public static Collider GetLookedAtCollider(EntityPlayer player, float distance = 4f)
+    {
+        if (Physics.Raycast(player.GetLookRay(), out var hitInfo, distance))
+        {
+            return hitInfo.collider;
+        }
+
+        return null;
+    }
+
 }

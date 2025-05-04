@@ -1,21 +1,23 @@
 using UnityEngine;
 
 
-public class ElectricalWireSection
+public class ElectricalWireSection : MonoBehaviour
 {
+    public const string propGameObject = "ElectricalWireSection";
+
     private static int SegmentsCount => Config.wireSegments;
 
     private static float Radius => Config.wireRadius;
 
-    private readonly Transform transform;
+    public ElectricalWire Parent { get; private set; }
 
-    public readonly ElectricalWire Parent;
+    public Vector3 StartPos { get; private set; }
 
-    public readonly Vector3 start;
-
-    public readonly Vector3 end;
+    public Vector3 EndPos { get; private set; }
 
     private MeshRenderer meshRenderer;
+
+    private BoxCollider collider;
 
     public Color Color
     {
@@ -29,20 +31,23 @@ public class ElectricalWireSection
         set => transform.gameObject.SetActive(value);
     }
 
-    public ElectricalWireSection(ElectricalWire parent, Vector3 start, Vector3 end)
+    public static ElectricalWireSection Create(ElectricalWire parent, Vector3 start, Vector3 end)
     {
-        this.start = start;
-        this.end = end;
+        var wireSection = new GameObject(propGameObject).AddComponent<ElectricalWireSection>();
 
-        transform = BuildCylinder(start, end);
-        transform.parent = parent.transform;
+        wireSection.transform.parent = parent.transform;
+        wireSection.StartPos = start;
+        wireSection.EndPos = end;
+        wireSection.Parent = parent;
+
+        return wireSection;
     }
 
-    private Transform BuildCylinder(Vector3 start, Vector3 end)
+    public void Start()
     {
-        var gameObject = new GameObject();
-        var direction = end - start;
+        var direction = EndPos - StartPos;
         var length = direction.magnitude;
+        var colliderWidth = Config.wireRadius * 4;
 
         var meshFilter = gameObject.AddComponent<MeshFilter>();
         meshFilter.mesh = GenerateCylinderMesh(length);
@@ -51,10 +56,12 @@ public class ElectricalWireSection
         meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
         meshRenderer.material.color = Config.wireDefaultColor;
 
-        gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
-        gameObject.transform.position = start;
+        collider = gameObject.AddComponent<BoxCollider>();
+        collider.center = new Vector3(0, length / 2, 0);
+        collider.size = new Vector3(colliderWidth, length, colliderWidth);
 
-        return gameObject.transform;
+        gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction);
+        gameObject.transform.position = StartPos;
     }
 
     private Mesh GenerateCylinderMesh(float length)
@@ -111,11 +118,6 @@ public class ElectricalWireSection
         mesh.RecalculateNormals();
 
         return mesh;
-    }
-
-    public void Cleanup()
-    {
-        Object.Destroy(transform.gameObject);
     }
 
 }

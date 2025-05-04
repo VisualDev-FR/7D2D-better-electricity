@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 
 public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
@@ -35,6 +36,14 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
         wire.AddSection(start, end);
     }
 
+    private void CmdCollide()
+    {
+        var player = GameManager.Instance.World.GetPrimaryPlayer();
+        var collider = RayCastUtils.GetLookedAtCollider(player, 4f);
+
+        logger.Info($"collider: {collider?.gameObject?.name}");
+    }
+
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {
         var args = _params.ToArray();
@@ -59,6 +68,10 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
 
             case "wire":
                 CmdSpawnWire();
+                break;
+
+            case "collide":
+                CmdCollide();
                 break;
 
             default:

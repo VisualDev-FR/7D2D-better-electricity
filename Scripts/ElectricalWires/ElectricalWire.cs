@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ElectricalWire
 {
     private readonly List<ElectricalWireSection> sections = new List<ElectricalWireSection>();
@@ -15,29 +16,43 @@ public class ElectricalWire
 
     public int SectionsCount => sections.Count;
 
-    public Vector3 GetLastPoint()
+    public ElectricalWireSection GetLastSection()
     {
         if (sections.Count == 0)
-            return Vector3.zero;
+            return null;
 
-        return sections[sections.Count - 1].end;
+        return sections[sections.Count - 1];
     }
 
     public void AddSection(Vector3 start, Vector3 end)
     {
-        sections.Add(new ElectricalWireSection(this, start, end));
+        sections.Add(ElectricalWireSection.Create(this, start, end));
     }
 
-    public void RemoveLast()
+    public bool RemoveLast()
     {
         if (sections.Count > 0)
         {
             var lastIndex = sections.Count - 1;
             var lastSection = sections[lastIndex];
 
-            lastSection.Cleanup();
+            Object.Destroy(lastSection.gameObject);
             sections.RemoveAt(lastIndex);
+
+            return true;
         }
+
+        return false;
+    }
+
+    public void RemoveAll()
+    {
+        foreach (var section in sections)
+        {
+            Object.Destroy(section.gameObject);
+        }
+
+        sections.Clear();
     }
 
     public void Cleanup()

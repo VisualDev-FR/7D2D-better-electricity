@@ -1,23 +1,31 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class ElectricalWireManager
 {
     public static readonly ElectricalWireManager Instance = new ElectricalWireManager();
 
-    public readonly List<ElectricalWire> spawnedWires = new List<ElectricalWire>();
+    public readonly HashSet<ElectricalWire> spawnedWires = new HashSet<ElectricalWire>();
 
-    public void RegisterWire(ElectricalWire wire)
+    private GameObject gameObject = new GameObject();
+
+    public void AddWire(ElectricalWire wire)
     {
         spawnedWires.Add(wire);
+        wire.Parent = gameObject.transform;
+    }
+
+    public void RemoveWire(ElectricalWire wire)
+    {
+        spawnedWires.Remove(wire);
+        wire.Cleanup();
     }
 
     public void Cleanup()
     {
-        foreach (var wire in spawnedWires)
-        {
-            wire.Cleanup();
-        }
-
+        Object.Destroy(gameObject);
         spawnedWires.Clear();
+
+        gameObject = new GameObject();
     }
 }

@@ -5,6 +5,8 @@ public class ElectricalWirePreview
 {
     private LineRenderer line;
 
+    private GameObject sphere;
+
     public Vector3 Start
     {
         get => line.GetPosition(0);
@@ -36,11 +38,30 @@ public class ElectricalWirePreview
         line.material = new Material(Shader.Find("Sprites/Default"));
         line.startColor = Config.wirePreviewColor;
         line.endColor = Config.wirePreviewColor;
+
+        sphere = CreateSphere(0.02f);
+        sphere.transform.parent = gameObject.transform;
+    }
+
+    private GameObject CreateSphere(float radius)
+    {
+        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.localScale = new Vector3(radius, radius, radius);
+        Object.Destroy(sphere.GetComponent<Collider>());
+
+        var renderer = sphere.GetComponent<Renderer>();
+        renderer.material = new Material(Shader.Find("Sprites/Default"));
+        renderer.material.color = Config.wirePreviewColor;
+
+        return sphere;
     }
 
     public void Cleanup()
     {
         Object.Destroy(line);
+
+        line = null;
+        sphere = null;
     }
 
     public void SetActive(bool value)
@@ -56,6 +77,7 @@ public class ElectricalWirePreview
         if (hitInfo.bHitValid)
         {
             End = RayCastUtils.CalcHitPos(hitInfo);
+            sphere.transform.position = End;
             SetActive(true);
         }
         else

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 
 public class ElectricalComponentManager
@@ -55,13 +56,5 @@ public class ElectricalComponentManager
         }
 
         spawnedComponents.Clear();
-    }
-
-    public void UpdateNodeVisibility(EntityPlayer player)
-    {
-        foreach (var component in spawnedComponents)
-        {
-            component.UpdateNodeVisibility(player);
-        }
     }
 }

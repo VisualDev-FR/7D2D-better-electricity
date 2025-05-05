@@ -1,100 +1,108 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
-public class ElectricalComponentInstance
+public class ElectricalComponentInstance : MonoBehaviour
 {
-    private ElectricalComponent Component { get; set; }
-
-    private Transform Transform { get; set; }
-
-    private Transform NodeTransform { get; set; }
-
-    public string ComponentName => Component.Name;
-
-    public Quaternion Rotation
+    public class NodeInstance : MonoBehaviour
     {
-        get => Transform.rotation;
-        set => Transform.rotation = value;
+        public ElectricalComponent.Node node;
+
+        public ElectricalComponentInstance parent;
+
+        public void Show(bool value)
+        {
+            GetComponent<MeshRenderer>().enabled = value;
+        }
     }
+
+    private static readonly Logging.Logger logger = Logging.CreateLogger<ElectricalComponentInstance>();
+
+    private readonly List<NodeInstance> nodeInstances = new List<NodeInstance>();
+
+    private ElectricalComponent Component { get; set; }
 
     public Vector3 Position
     {
-        get => Transform.position;
-        set => Transform.position = value;
+        get => transform.position;
+        set => transform.position = value;
     }
 
-    public ElectricalComponentInstance(string name, Transform transform)
+    public Quaternion Rotation
     {
-        Component = ElectricalComponentManager.Instance.GetComponent(name);
-        NodeTransform = UnityUtils.FindByName(transform, "nodes");
-        Transform = transform;
+        get => transform.rotation;
+        set => transform.rotation = value;
+    }
+
+    public bool IsActive
+    {
+        get => transform.gameObject.activeSelf;
+        set => transform.gameObject.SetActive(value);
+    }
+
+    public static ElectricalComponentInstance Create(ItemClass itemClass)
+    {
+        var prefab = DataLoader.LoadAsset<GameObject>(itemClass.MeshFile);
+        var instance = Instantiate(prefab);
+
+        var component = ElectricalComponentManager.Instance.GetComponent(itemClass.Name);
+        var componentInstance = instance.AddComponent<ElectricalComponentInstance>();
+        componentInstance.InitializeComponent(component);
+
+        return componentInstance;
     }
 
     public ElectricalComponentInstance Clone()
     {
-        var clonedTransform = Object.Instantiate(Transform.gameObject).transform;
+        var clone = Instantiate(this);
 
-        return new ElectricalComponentInstance(Component.Name, clonedTransform)
-        {
-            Position = this.Position,
-            Rotation = this.Rotation,
-        };
+        clone.transform.position = this.transform.position;
+        clone.transform.rotation = this.transform.rotation;
+        clone.InitializeComponent(this.Component);
+
+        return clone;
     }
 
-    public void OnSpawn()
+    private void InitializeComponent(ElectricalComponent component)
+    {
+        Component = component;
+
+        var nodeTransform = UnityUtils.FindByName(transform, "nodes");
+
+        Assert.IsNotNull(Component);
+        Assert.IsNotNull(nodeTransform);
+
+        for (int i = 0; i < nodeTransform.childCount; i++)
+        {
+            var transform = nodeTransform.GetChild(i);
+            var nodeInstance = transform.gameObject.AddComponent<NodeInstance>();
+
+            nodeInstance.node = Component.nodes[transform.name];
+            nodeInstance.parent = this;
+
+            nodeInstances.Add(nodeInstance);
+        }
+
+        ShowNodes(false);
+    }
+
+    public virtual void OnSpawn()
     {
         Component.OnSpawn(this);
     }
 
-    public void OnPickup()
+    public void ShowNodes(bool value)
     {
-        Component.OnPickup(this);
-    }
-
-    public bool HasNullTransform() => Transform == null || Transform.gameObject == null;
-
-    public void Rotate(Vector3 axis, float angle) => Transform.Rotate(axis, angle);
-
-    public void ShowNodes(bool value) => NodeTransform.gameObject.SetActive(value);
-
-    public void SetActive(bool value) => Transform.gameObject.SetActive(value);
-
-    public bool IsActive() => Transform.gameObject.activeSelf;
-
-    public bool NodeVisible() => NodeTransform.gameObject.activeSelf;
-
-    public bool IsLookedByPlayer(EntityPlayer player)
-    {
-        if (Physics.Raycast(player.GetLookRay(), out var hit, 4f))
+        foreach (var nodeInstance in nodeInstances)
         {
-            return hit.collider.transform.IsChildOf(Transform);
-        }
-
-        return false;
-    }
-
-    public void UpdateNodeVisibility(EntityPlayer player)
-    {
-        bool lookedByPlayer = IsLookedByPlayer(player);
-        bool nodeVisible = NodeVisible();
-
-        if (lookedByPlayer && !nodeVisible)
-        {
-            ShowNodes(true);
-        }
-        else if (!lookedByPlayer && nodeVisible)
-        {
-            ShowNodes(false);
+            nodeInstance.Show(value);
         }
     }
+
+    public void Rotate(Vector3 axis, float angle) => transform.Rotate(axis, angle);
 
     public void Cleanup()
     {
-        if (Transform != null && Transform.gameObject != null)
-        {
-            Object.Destroy(Transform.gameObject);
-        }
-
-        Transform = null;
-        NodeTransform = null;
+        Object.Destroy(gameObject);
     }
 }

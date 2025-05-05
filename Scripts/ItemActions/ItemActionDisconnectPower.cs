@@ -1,5 +1,5 @@
-using Audio;
 using UnityEngine;
+using ItemActionDataConnectPower = ItemActionConnectPowerV2.ActionData;
 
 
 public class ItemActionDisconnectPowerV2 : ItemAction

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 
+
 public abstract class ElectricalComponent
 {
     public class Node
@@ -20,7 +21,7 @@ public abstract class ElectricalComponent
 
     public int PowerLoss { get; set; }
 
-    public readonly List<Node> nodes = new List<Node>();
+    public readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
 
     public virtual void Init(DynamicProperties properties)
     {
@@ -29,14 +30,19 @@ public abstract class ElectricalComponent
 
     public virtual void CreateNode(XElement element)
     {
-        var connector = new Node()
+        var node = new Node()
         {
             Name = element.Attribute("name").Value,
             Type = element.Attribute("type").Value,
             Parent = this,
         };
 
-        nodes.Add(connector);
+        if (nodes.ContainsKey(node.Name))
+        {
+            throw new System.Exception($"Duplicate node name: '{node.Name}'");
+        }
+
+        nodes[node.Name] = node;
     }
 
     public virtual void OnSpawn(ElectricalComponentInstance instance) { }

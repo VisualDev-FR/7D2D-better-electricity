@@ -6,6 +6,17 @@ using UnityEngine;
 
 public class ItemActionSpawnElectricalComponent : ItemAction
 {
+    public class ItemActionDataSpawnEletricalComponent : ItemActionAttackData
+    {
+        public ElectricalComponentInstance componentInstance { get; set; }
+
+        public float lastRotationTime;
+
+        public BlockFace blockFace = BlockFace.None;
+
+        public ItemActionDataSpawnEletricalComponent(ItemInventoryData _invData, int _indexInEntityOfAction) : base(_invData, _indexInEntityOfAction) { }
+    }
+
     private static readonly Logging.Logger logger = Logging.CreateLogger<ItemActionSpawnElectricalComponent>();
 
     public const int cColliderMask = 28901376;
@@ -56,21 +67,17 @@ public class ItemActionSpawnElectricalComponent : ItemAction
     {
         var actionData = _actionData as ItemActionDataSpawnEletricalComponent;
 
-        if (actionData.component != null)
-            actionData.component.Cleanup();
+        if (actionData.componentInstance != null)
+            actionData.componentInstance.Cleanup();
 
-        var gameObject = DataLoader.LoadAsset<GameObject>(item.MeshFile);
-        var transform = Object.Instantiate(gameObject).transform;
-
-        actionData.component = new ElectricalComponentInstance(item.Name, transform);
-        actionData.component.ShowNodes(false);
+        actionData.componentInstance = ElectricalComponentInstance.Create(item);
 
         UpdatePreview(actionData, true);
     }
 
     private void UpdatePreview(ItemActionDataSpawnEletricalComponent actionData, bool updateRotation)
     {
-        if (actionData.component is null || actionData.component.HasNullTransform())
+        if (actionData.componentInstance == null)
             return;
 
         var world = actionData.invData.world;
@@ -78,7 +85,7 @@ public class ItemActionSpawnElectricalComponent : ItemAction
 
         if (!Voxel.Raycast(world, lookRay, 10f, 8454144, 69, 0f))
         {
-            actionData.component.SetActive(false);
+            actionData.componentInstance.IsActive = false;
             return;
         }
 
@@ -87,20 +94,20 @@ public class ItemActionSpawnElectricalComponent : ItemAction
         var faceNormal = RayCastUtils.GetFaceNormal(hitInfo);
 
         if (updateRotation || actionData.blockFace != hitInfo.hit.blockFace)
-            actionData.component.Rotation = Quaternion.FromToRotation(Vector3.up, faceNormal);
+            actionData.componentInstance.Rotation = Quaternion.FromToRotation(Vector3.up, faceNormal);
 
         TryRotatePreview(actionData);
 
         actionData.blockFace = hitInfo.hit.blockFace;
-        actionData.component.Position = hitPosition;
-        actionData.component.SetActive(true);
+        actionData.componentInstance.Position = hitPosition;
+        actionData.componentInstance.IsActive = true;
     }
 
     private void TryRotatePreview(ItemActionDataSpawnEletricalComponent actionData)
     {
         if (Input.GetKey(KeyCode.R) && Time.time - actionData.lastRotationTime > rotationDelay)
         {
-            actionData.component.Rotate(Vector3.up, 90f);
+            actionData.componentInstance.Rotate(Vector3.up, 90f);
             actionData.lastRotationTime = Time.time;
         }
     }
@@ -108,9 +115,9 @@ public class ItemActionSpawnElectricalComponent : ItemAction
     public override void StopHolding(ItemActionData _actionData)
     {
         var actionData = _actionData as ItemActionDataSpawnEletricalComponent;
-        if (!actionData.component.HasNullTransform() && actionData.invData.holdingEntity is EntityPlayerLocal)
+        if (actionData.componentInstance != null && actionData.invData.holdingEntity is EntityPlayerLocal)
         {
-            actionData.component.Cleanup();
+            actionData.componentInstance.Cleanup();
         }
     }
 
@@ -130,10 +137,10 @@ public class ItemActionSpawnElectricalComponent : ItemAction
         if (!(_actionData is ItemActionDataSpawnEletricalComponent actionData))
             return;
 
-        if (actionData.component.HasNullTransform() || !actionData.component.IsActive())
+        if (actionData.componentInstance == null || !actionData.componentInstance.IsActive)
             return;
 
-        ElectricalComponentManager.Instance.SpawnComponent(actionData.component.Clone());
+        ElectricalComponentManager.Instance.SpawnComponent(actionData.componentInstance.Clone());
 
         actionData.invData.itemStack.count--;
         actionData.invData.Changed();

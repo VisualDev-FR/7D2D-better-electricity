@@ -53,7 +53,7 @@ public class ElectricalWireSection : MonoBehaviour
         meshFilter.mesh = GenerateCylinderMesh(length);
 
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        meshRenderer.material = Config.MaterialSpritesDefault;
         meshRenderer.material.color = Config.wireDefaultColor;
 
         collider = gameObject.AddComponent<BoxCollider>();

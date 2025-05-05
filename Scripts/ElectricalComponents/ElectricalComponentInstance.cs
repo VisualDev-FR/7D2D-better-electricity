@@ -10,9 +10,17 @@ public class ElectricalComponentInstance : MonoBehaviour
 
         public ElectricalComponentInstance parent;
 
+        public MeshRenderer meshRenderer;
+
+        public Color Color
+        {
+            get => meshRenderer.material.color;
+            set => meshRenderer.material.color = value;
+        }
+
         public void Show(bool value)
         {
-            GetComponent<MeshRenderer>().enabled = value;
+            meshRenderer.enabled = value;
         }
     }
 
@@ -47,7 +55,7 @@ public class ElectricalComponentInstance : MonoBehaviour
 
         var component = ElectricalComponentManager.Instance.GetComponent(itemClass.Name);
         var componentInstance = instance.AddComponent<ElectricalComponentInstance>();
-        componentInstance.InitializeComponent(component);
+        componentInstance.Init(component);
 
         return componentInstance;
     }
@@ -58,12 +66,12 @@ public class ElectricalComponentInstance : MonoBehaviour
 
         clone.transform.position = this.transform.position;
         clone.transform.rotation = this.transform.rotation;
-        clone.InitializeComponent(this.Component);
+        clone.Init(this.Component);
 
         return clone;
     }
 
-    private void InitializeComponent(ElectricalComponent component)
+    private void Init(ElectricalComponent component)
     {
         Component = component;
 
@@ -77,6 +85,8 @@ public class ElectricalComponentInstance : MonoBehaviour
             var transform = nodeTransform.GetChild(i);
             var nodeInstance = transform.gameObject.AddComponent<NodeInstance>();
 
+            nodeInstance.meshRenderer = transform.GetComponent<MeshRenderer>();
+            nodeInstance.meshRenderer.material = Config.MaterialSpritesDefault;
             nodeInstance.node = Component.nodes[transform.name];
             nodeInstance.parent = this;
 
@@ -84,6 +94,7 @@ public class ElectricalComponentInstance : MonoBehaviour
         }
 
         ShowNodes(false);
+        SetNodesColor(Config.nodePreviewColor);
     }
 
     public virtual void OnSpawn()
@@ -96,6 +107,14 @@ public class ElectricalComponentInstance : MonoBehaviour
         foreach (var nodeInstance in nodeInstances)
         {
             nodeInstance.Show(value);
+        }
+    }
+
+    public void SetNodesColor(Color color)
+    {
+        foreach (var nodeInstance in nodeInstances)
+        {
+            nodeInstance.Color = color;
         }
     }
 

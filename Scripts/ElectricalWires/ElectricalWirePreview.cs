@@ -35,7 +35,7 @@ public class ElectricalWirePreview
         line.positionCount = 2;
         line.startWidth = Config.wireRadius;
         line.endWidth = Config.wireRadius;
-        line.material = new Material(Shader.Find("Sprites/Default"));
+        line.material = Config.MaterialSpritesDefault;
         line.startColor = Config.wirePreviewColor;
         line.endColor = Config.wirePreviewColor;
 
@@ -50,7 +50,7 @@ public class ElectricalWirePreview
         Object.Destroy(sphere.GetComponent<Collider>());
 
         var renderer = sphere.GetComponent<Renderer>();
-        renderer.material = new Material(Shader.Find("Sprites/Default"));
+        renderer.material = Config.MaterialSpritesDefault;
         renderer.material.color = Config.wirePreviewColor;
 
         return sphere;

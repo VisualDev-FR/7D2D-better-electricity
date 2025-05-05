@@ -81,38 +81,22 @@ public class ItemActionConnectPowerV2 : ItemAction
             }
         }
 
-        if (targetComponent != null && targetComponent != actionData.targetComponent)
-        {
-            if (actionData.targetComponent != null)
-                actionData.targetComponent.ShowNodes(false);
+        actionData.targetComponent?.ShowNodes(false);
+        actionData.targetComponent?.SetNodesColor(Config.nodePreviewColor);
+        actionData.targetComponent = null;
+        actionData.targetNode = null;
 
+        if (targetNode != null)
+        {
+            actionData.targetComponent = targetNode.parent;
+            actionData.targetNode = targetNode;
+            actionData.targetComponent.ShowNodes(true);
+            actionData.targetNode.Color = new Color(0, 255, 0, 0.05f);
+        }
+        else if (targetComponent != null)
+        {
             actionData.targetComponent = targetComponent;
             actionData.targetComponent.ShowNodes(true);
-        }
-        else if (targetComponent == null && actionData.targetComponent != null)
-        {
-            actionData.targetComponent.ShowNodes(false);
-            actionData.targetComponent = null;
-        }
-
-        if (targetNode != null && targetNode != actionData.targetNode)
-        {
-            if (actionData.targetComponent != null)
-            {
-                actionData.targetComponent.ShowNodes(false);
-                actionData.targetComponent = null;
-            }
-
-            if (actionData.targetNode != null)
-                actionData.targetNode.Show(false);
-
-            actionData.targetNode = targetNode;
-            actionData.targetNode.Show(true);
-        }
-        else if (targetNode == null && actionData.targetNode != null)
-        {
-            actionData.targetNode.Show(false);
-            actionData.targetNode = null;
         }
     }
 

@@ -1,27 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using UnityEngine.Assertions;
 
 
 public abstract class ElectricalComponent
 {
-    public class Node
-    {
-        public ElectricalComponent Parent { get; set; }
-
-        public string Name { get; set; }
-
-        public string Type { get; set; }
-
-        public bool IsInput => Type == "input" || Type == "dual";
-
-        public bool IsOutput => Type == "output" || Type == "dual";
-    }
-
     public string Name { get; set; }
 
     public int PowerLoss { get; set; }
 
-    public readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+    public readonly Dictionary<string, ElectricalNode> nodes = new Dictionary<string, ElectricalNode>();
 
     public virtual void Init(DynamicProperties properties)
     {
@@ -30,10 +19,10 @@ public abstract class ElectricalComponent
 
     public virtual void CreateNode(XElement element)
     {
-        var node = new Node()
+        var node = new ElectricalNode()
         {
             Name = element.Attribute("name").Value,
-            Type = element.Attribute("type").Value,
+            nodeType = ModUtils.ParseEnum<ElectricalNode.NodeType>(element.Attribute("type").Value),
             Parent = this,
         };
 
@@ -41,6 +30,8 @@ public abstract class ElectricalComponent
         {
             throw new System.Exception($"Duplicate node name: '{node.Name}'");
         }
+
+        Assert.IsNotNull(node);
 
         nodes[node.Name] = node;
     }

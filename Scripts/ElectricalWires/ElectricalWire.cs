@@ -8,6 +8,10 @@ public class ElectricalWire
 
     public readonly Transform transform = new GameObject().transform;
 
+    public ElectricalNodeInstance StartNode { get; set; }
+
+    public ElectricalNodeInstance EndNode { get; set; }
+
     public Transform Parent
     {
         get => transform.parent;

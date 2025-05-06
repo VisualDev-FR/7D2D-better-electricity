@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class ElectricalWireManager
 {
@@ -11,6 +12,9 @@ public class ElectricalWireManager
 
     public void AddWire(ElectricalWire wire)
     {
+        Assert.IsNotNull(wire.StartNode);
+        Assert.IsNotNull(wire.EndNode);
+
         spawnedWires.Add(wire);
         wire.Parent = gameObject.transform;
     }

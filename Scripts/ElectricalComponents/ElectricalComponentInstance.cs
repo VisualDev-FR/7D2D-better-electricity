@@ -4,31 +4,13 @@ using UnityEngine.Assertions;
 
 public class ElectricalComponentInstance : MonoBehaviour
 {
-    public class NodeInstance : MonoBehaviour
-    {
-        public ElectricalComponent.Node node;
-
-        public ElectricalComponentInstance parent;
-
-        public MeshRenderer meshRenderer;
-
-        public Color Color
-        {
-            get => meshRenderer.material.color;
-            set => meshRenderer.material.color = value;
-        }
-
-        public void Show(bool value)
-        {
-            meshRenderer.enabled = value;
-        }
-    }
-
     private static readonly Logging.Logger logger = Logging.CreateLogger<ElectricalComponentInstance>();
 
-    private readonly List<NodeInstance> nodeInstances = new List<NodeInstance>();
+    private readonly List<ElectricalNodeInstance> nodeInstances = new List<ElectricalNodeInstance>();
 
     private ElectricalComponent Component { get; set; }
+
+    private ItemClass itemClass;
 
     public Vector3 Position
     {
@@ -55,6 +37,8 @@ public class ElectricalComponentInstance : MonoBehaviour
 
         var component = ElectricalComponentManager.Instance.GetComponent(itemClass.Name);
         var componentInstance = instance.AddComponent<ElectricalComponentInstance>();
+
+        componentInstance.itemClass = itemClass;
         componentInstance.Init(component);
 
         return componentInstance;
@@ -62,11 +46,10 @@ public class ElectricalComponentInstance : MonoBehaviour
 
     public ElectricalComponentInstance Clone()
     {
-        var clone = Instantiate(this);
+        var clone = Create(itemClass);
 
-        clone.transform.position = this.transform.position;
-        clone.transform.rotation = this.transform.rotation;
-        clone.Init(this.Component);
+        clone.Position = Position;
+        clone.Rotation = Rotation;
 
         return clone;
     }
@@ -83,12 +66,21 @@ public class ElectricalComponentInstance : MonoBehaviour
         for (int i = 0; i < nodeTransform.childCount; i++)
         {
             var transform = nodeTransform.GetChild(i);
-            var nodeInstance = transform.gameObject.AddComponent<NodeInstance>();
+            var nodeInstance = transform.gameObject.AddComponent<ElectricalNodeInstance>();
 
             nodeInstance.meshRenderer = transform.GetComponent<MeshRenderer>();
             nodeInstance.meshRenderer.material = Config.MaterialSpritesDefault;
             nodeInstance.node = Component.nodes[transform.name];
             nodeInstance.parent = this;
+
+            logger.Debug($"Created node instance: {nodeInstance.name}, with node: {nodeInstance.node}");
+
+
+            Assert.IsNotNull(nodeInstance.node, $"name: {transform.name}"); // OK
+
+            var nodeInstanceRetreived = transform.GetComponent<ElectricalComponentInstance>();
+
+            Assert.IsNotNull(nodeInstance.node); // OK ou pas OK ?
 
             nodeInstances.Add(nodeInstance);
         }
@@ -106,7 +98,7 @@ public class ElectricalComponentInstance : MonoBehaviour
     {
         foreach (var nodeInstance in nodeInstances)
         {
-            nodeInstance.Show(value);
+            nodeInstance?.Show(value);
         }
     }
 
@@ -114,7 +106,10 @@ public class ElectricalComponentInstance : MonoBehaviour
     {
         foreach (var nodeInstance in nodeInstances)
         {
-            nodeInstance.Color = color;
+            if (nodeInstance != null)
+            {
+                nodeInstance.Color = color;
+            }
         }
     }
 

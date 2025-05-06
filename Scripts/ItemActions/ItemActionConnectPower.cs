@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Assertions;
 
 
 public class ItemActionConnectPowerV2 : ItemAction
@@ -11,7 +12,7 @@ public class ItemActionConnectPowerV2 : ItemAction
 
         public ElectricalWire wire;
 
-        public ElectricalComponentInstance.NodeInstance targetNode;
+        public ElectricalNodeInstance targetNode;
 
         public ElectricalComponentInstance targetComponent;
 
@@ -61,12 +62,12 @@ public class ItemActionConnectPowerV2 : ItemAction
     {
         var player = actionData.invData.holdingEntity as EntityPlayer;
 
-        ElectricalComponentInstance.NodeInstance targetNode = null;
+        ElectricalNodeInstance targetNode = null;
         ElectricalComponentInstance targetComponent = null;
 
         foreach (var hit in Physics.RaycastAll(player.GetLookRay(), 4f))
         {
-            var node = hit.transform.GetComponent<ElectricalComponentInstance.NodeInstance>();
+            var node = hit.transform.GetComponent<ElectricalNodeInstance>();
             if (node != null)
             {
                 targetNode = node;
@@ -106,16 +107,24 @@ public class ItemActionConnectPowerV2 : ItemAction
             return;
 
         var actionData = _actionData as ActionData;
-        var hitInfoValid = actionData.invData.hitInfo.bHitValid;
 
-        if (hitInfoValid && !actionData.IsWiring)
+        if (!actionData.IsWiring && actionData.targetNode != null)
         {
             StartWiring(actionData);
+            return;
         }
-        else if (hitInfoValid)
+        else if (actionData.IsWiring && actionData.targetNode != null)
+        {
+            ValidateWire(actionData);
+            return;
+        }
+        else if (actionData.IsWiring && actionData.invData.hitInfo.bHitValid)
         {
             AddWiringNode(actionData);
+            return;
         }
+
+        ModUtils.UIDenied("ttRequiresCompatibleNode");
     }
 
     public override bool IsActionRunning(ItemActionData _actionData)
@@ -138,7 +147,8 @@ public class ItemActionConnectPowerV2 : ItemAction
     private void StartWiring(ActionData actionData)
     {
         actionData.IsWiring = true;
-        actionData.wirePreview.Start = RayCastUtils.CalcHitPos(actionData.invData.hitInfo, Config.wireOffset);
+        actionData.wire.StartNode = actionData.targetNode;
+        actionData.wirePreview.Start = actionData.targetNode.Position;
         actionData.wirePreview.Update(actionData.invData.hitInfo);
         actionData.wirePreview.SetActive(true);
     }
@@ -165,16 +175,26 @@ public class ItemActionConnectPowerV2 : ItemAction
         actionData.wire.AddSection(actionData.wirePreview.Start, hitPos);
         actionData.wirePreview.Start = hitPos;
         actionData.IsWiring = true;
-
-        if (InputUtils.ShiftKeyPressed)
-        {
-            ValidateWire(actionData);
-            return;
-        }
     }
 
     public void ValidateWire(ActionData actionData)
     {
+        Assert.IsNotNull(actionData.wire);
+        Assert.IsNotNull(actionData.wire.StartNode);
+        Assert.IsNotNull(actionData.wire.StartNode.node);
+
+        Assert.IsNotNull(actionData.targetNode);
+        Assert.IsNotNull(actionData.targetNode.node);
+
+        if (!actionData.wire.StartNode.CanConnectWith(actionData.targetNode))
+        {
+            ModUtils.UIDenied("ttRequiresCompatibleNode");
+            return;
+        }
+
+        actionData.wire.EndNode = actionData.targetNode;
+        actionData.wire.AddSection(actionData.wirePreview.Start, actionData.targetNode.Position);
+
         ElectricalWireManager.Instance.AddWire(actionData.wire);
 
         actionData.IsWiring = false;

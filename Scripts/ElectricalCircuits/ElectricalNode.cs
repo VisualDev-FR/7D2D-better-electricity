@@ -2,9 +2,9 @@ public class ElectricalNode
 {
     public enum NodeType
     {
-        Input = 0,
-        Output = 0,
-        Dual = 0,
+        Input,
+        Output,
+        Dual,
     }
 
     public ElectricalComponent Parent { get; set; }

@@ -89,10 +89,12 @@ public class ItemActionConnectPowerV2 : ItemAction
 
         if (targetNode != null)
         {
+            bool canConnect = actionData.wire.StartNode == null || targetNode.CanConnectWith(actionData.wire.StartNode);
+
             actionData.targetComponent = targetNode.parent;
             actionData.targetNode = targetNode;
             actionData.targetComponent.ShowNodes(true);
-            actionData.targetNode.Color = new Color(0, 255, 0, 0.05f);
+            actionData.targetNode.Color = canConnect ? new Color(0, 255, 0, 0.05f) : new Color(255, 0, 0, 0.05f);
         }
         else if (targetComponent != null)
         {

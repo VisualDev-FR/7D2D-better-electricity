@@ -3,6 +3,8 @@ using UnityEngine.Assertions;
 
 public class ElectricalNodeInstance : MonoBehaviour
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<ElectricalNodeInstance>();
+
     public ElectricalNode node;
 
     public ElectricalComponentInstance parent;

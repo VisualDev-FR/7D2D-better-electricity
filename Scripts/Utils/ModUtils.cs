@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using UnityEngine;
 
 public class ModUtils
 {
@@ -12,5 +14,21 @@ public class ModUtils
     public static T ParseEnum<T>(string value, bool ignoreCase = true)
     {
         return (T)Enum.Parse(typeof(T), value, ignoreCase);
+    }
+
+    public static Vector3 ParseVector3(string value)
+    {
+        if (value == null)
+            return Vector3.zero;
+
+        var coords = value.Split(',')
+            .Select(c => c.Trim())
+            .ToArray();
+
+        return new Vector3(
+            float.Parse(coords[0]),
+            float.Parse(coords[1]),
+            float.Parse(coords[2])
+        );
     }
 }

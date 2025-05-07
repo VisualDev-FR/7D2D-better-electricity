@@ -1,0 +1,38 @@
+<config>
+
+    <append xpath="/blocks">
+
+        <block name="belec_blockPowerSwitch">
+
+            <property name="Class" value="BlockElectricalSwitch, BetterElectricity" />
+            <property name="CustomIcon" value="powerSwitch01" />
+            <property name="CustomIconTint" value="200, 0, 0" />
+
+            <property name="ActivateSound" value="button4" />
+            <property name="Powered" value="true" />
+            <property name="SingleUse" value="true" />
+            <property name="Material" value="Msteel" />
+            <property name="Shape" value="ModelEntity" />
+            <property name="Model" value="Entities/Industrial/powerSwitchOff_01Prefab" />
+            <property name="LightOpacity" value="2" />
+            <property name="WaterFlow" value="permitted" />
+            <property name="Place" value="TowardsPlacerInverted" />
+            <property name="Collide" value="movement,melee,bullet,arrow,rocket" />
+            <property name="SortOrder1" value="B154" />
+            <property name="SortOrder2" value="0000" />
+            <property name="FilterTags" value="MC_building,SC_electrical" />
+
+            <drop event="Harvest" name="terrStone" count="0" tool_category="Disassemble" />
+            <drop event="Harvest" name="resourceElectricParts" count="1" tag="salvageHarvest" />
+            <drop event="Harvest" name="resourceScrapIron" count="2,6" tag="salvageHarvest" />
+            <drop event="Destroy" count="0" />
+            <drop event="Fall" count="0" prob="0" />
+
+            <property class="RepairItems">
+                <property name="resourceForgedIron" value="1" />
+            </property>
+        </block>
+
+    </append>
+
+</config>

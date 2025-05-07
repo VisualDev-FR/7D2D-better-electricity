@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class ElectricalNode
 {
     public enum NodeType
@@ -16,4 +18,6 @@ public class ElectricalNode
     public bool IsInput => nodeType == NodeType.Input || nodeType == NodeType.Dual;
 
     public bool IsOutput => nodeType == NodeType.Output || nodeType == NodeType.Dual;
+
+    public Vector3 position { get; set; }
 }

@@ -44,6 +44,24 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
         logger.Info($"collider: {collider?.gameObject?.name}");
     }
 
+    private void CmdNodePosition(string[] args)
+    {
+        var player = GameManager.Instance.World.GetPrimaryPlayer();
+        var nodeInstance = RayCastUtils.GetComponent<ElectricalNodeInstance>(player);
+
+        if (nodeInstance == null)
+        {
+            logger.Error($"No looked nodeInstance");
+            return;
+        }
+
+        nodeInstance.transform.localPosition = new Vector3(
+            float.Parse(args[1]),
+            float.Parse(args[2]),
+            float.Parse(args[3])
+        );
+    }
+
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {
         var args = _params.ToArray();
@@ -72,6 +90,12 @@ public class BetterElectricityConsoleCmd : ConsoleCmdAbstract
 
             case "collide":
                 CmdCollide();
+                break;
+
+            case "nodeposition":
+            case "nodepos":
+            case "np":
+                CmdNodePosition(args);
                 break;
 
             default:

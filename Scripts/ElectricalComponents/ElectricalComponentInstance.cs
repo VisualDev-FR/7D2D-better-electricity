@@ -44,6 +44,35 @@ public class ElectricalComponentInstance : MonoBehaviour
         return componentInstance;
     }
 
+    public static ElectricalComponentInstance Create(Block block, Transform transform)
+    {
+        var component = ElectricalComponentManager.Instance.GetComponent(block.blockName);
+        var componentInstance = transform.gameObject.AddComponent<ElectricalComponentInstance>();
+
+        var nodesTransform = new GameObject("nodes").transform;
+        nodesTransform.parent = transform;
+        nodesTransform.position = transform.position;
+        nodesTransform.rotation = transform.rotation;
+
+        foreach (var node in component.nodes.Values)
+        {
+            var gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+            gameObject.name = node.Name;
+            gameObject.transform.parent = nodesTransform;
+            gameObject.transform.localPosition = node.position;
+            gameObject.transform.localScale = Config.nodeScale;
+
+            logger.Debug($"parent: {nodesTransform.position}, child: {gameObject.transform.position}");
+        }
+
+        componentInstance.itemClass = null;
+        componentInstance.Init(component);
+        componentInstance.ShowNodes(true);
+
+        return componentInstance;
+    }
+
     public ElectricalComponentInstance Clone()
     {
         var clone = Create(itemClass);
@@ -72,15 +101,6 @@ public class ElectricalComponentInstance : MonoBehaviour
             nodeInstance.meshRenderer.material = Config.MaterialSpritesDefault;
             nodeInstance.node = Component.nodes[transform.name];
             nodeInstance.parent = this;
-
-            logger.Debug($"Created node instance: {nodeInstance.name}, with node: {nodeInstance.node}");
-
-
-            Assert.IsNotNull(nodeInstance.node, $"name: {transform.name}"); // OK
-
-            var nodeInstanceRetreived = transform.GetComponent<ElectricalComponentInstance>();
-
-            Assert.IsNotNull(nodeInstance.node); // OK ou pas OK ?
 
             nodeInstances.Add(nodeInstance);
         }

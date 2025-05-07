@@ -38,4 +38,17 @@ public static class RayCastUtils
         return null;
     }
 
+    public static T GetComponent<T>(EntityPlayer player, float distance = 4f) where T : class
+    {
+        foreach (var hit in Physics.RaycastAll(player.GetLookRay(), distance))
+        {
+            if (hit.transform.GetComponent<T>() is T component)
+            {
+                return component;
+            }
+        }
+
+        return null;
+    }
+
 }

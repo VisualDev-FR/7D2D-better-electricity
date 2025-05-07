@@ -20,6 +20,13 @@ public class ItemActionConnectPowerV2 : ItemAction
 
     }
 
+    public class TargetInfos
+    {
+        public ElectricalNodeInstance nodeInstance;
+
+        public ElectricalComponentInstance componentInstance;
+    }
+
     private static readonly Logging.Logger logger = Logging.CreateLogger<ItemActionConnectPowerV2>();
 
     public override ItemActionData CreateModifierData(ItemInventoryData _invData, int _indexInEntityOfAction)
@@ -58,34 +65,45 @@ public class ItemActionConnectPowerV2 : ItemAction
         actionData.wirePreview.Update(actionData.invData.hitInfo);
     }
 
-    private void UpdateTarget(ActionData actionData)
+    private TargetInfos GetTargetInfos(ActionData actionData)
     {
+        var targetInfos = new TargetInfos();
         var player = actionData.invData.holdingEntity as EntityPlayer;
+        var ray = player.GetLookRay();
 
-        ElectricalNodeInstance targetNode = null;
-        ElectricalComponentInstance targetComponent = null;
-
-        foreach (var hit in Physics.RaycastAll(player.GetLookRay(), 4f))
+        foreach (var hit in Physics.RaycastAll(ray, 4f))
         {
-            var node = hit.transform.GetComponent<ElectricalNodeInstance>();
-            if (node != null)
+            foreach (var node in hit.transform.GetComponentsInChildren<ElectricalNodeInstance>())
             {
-                targetNode = node;
-                break;
+                var collider = node.GetComponent<Collider>();
+
+                if (collider != null && collider.Raycast(ray, out var _, 4f))
+                {
+                    targetInfos.nodeInstance = node;
+                    return targetInfos;
+                }
             }
 
-            var component = hit.transform.GetComponent<ElectricalComponentInstance>();
-            if (component != null)
+            if (hit.transform.GetComponent<ElectricalComponentInstance>() is ElectricalComponentInstance component)
             {
-                targetComponent = component;
+                targetInfos.componentInstance = component;
                 break;
             }
         }
 
+        return targetInfos;
+    }
+
+    private void UpdateTarget(ActionData actionData)
+    {
         actionData.targetComponent?.ShowNodes(false);
         actionData.targetComponent?.SetNodesColor(Config.nodePreviewColor);
         actionData.targetComponent = null;
         actionData.targetNode = null;
+
+        var targetInfos = GetTargetInfos(actionData);
+        var targetNode = targetInfos.nodeInstance;
+        var targetComponent = targetInfos.componentInstance;
 
         if (targetNode != null)
         {

@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 
@@ -24,6 +24,7 @@ public abstract class ElectricalComponent
             Name = element.Attribute("name").Value,
             nodeType = ModUtils.ParseEnum<ElectricalNode.NodeType>(element.Attribute("type").Value),
             Parent = this,
+            position = ModUtils.ParseVector3(element.Attribute("position")?.Value),
         };
 
         if (nodes.ContainsKey(node.Name))

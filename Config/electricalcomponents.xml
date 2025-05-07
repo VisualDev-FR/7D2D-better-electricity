@@ -12,4 +12,16 @@
 
     </component>
 
+    <component name="belec_blockPowerSwitch">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <nodes>
+            <node name="input" type="input" position="0,0.1,-0.46" />
+            <node name="output" type="output" position="0,-0.5,-0.46" />
+        </nodes>
+
+    </component>
+
 </electricalcomponents>

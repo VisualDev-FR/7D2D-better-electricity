@@ -19,5 +19,7 @@ public class Config
 
     public static float wireOffset = 0.010f;
 
+    public static Vector3 nodeScale = new Vector3(0.05f, 0.05f, 0.05f);
+
     public static Material MaterialSpritesDefault => new Material(Shader.Find("Sprites/Default"));
 }

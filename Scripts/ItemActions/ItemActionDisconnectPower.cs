@@ -4,6 +4,13 @@ using ItemActionDataConnectPower = ItemActionConnectPowerV2.ActionData;
 
 public class ItemActionDisconnectPowerV2 : ItemAction
 {
+    public class ItemActionDataDisconnectPower : ItemActionAttackData
+    {
+        public bool StartDisconnect;
+
+        public ItemActionDataDisconnectPower(ItemInventoryData _invData, int _indexInEntityOfAction) : base(_invData, _indexInEntityOfAction) { }
+    }
+
     private static readonly Logging.Logger logger = Logging.CreateLogger<ItemActionDisconnectPowerV2>();
 
     public ItemActionDataConnectPower GetItemActionDataConnectPower(ItemActionData _actionData) => _actionData.invData.holdingEntity.inventory.holdingItemData.actionData[0] as ItemActionDataConnectPower;

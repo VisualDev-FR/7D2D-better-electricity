@@ -29,7 +29,7 @@ public class ElectricalComponentFromXml
         component.Name = name;
         component.Init(properties);
 
-        foreach (var element in node.Element("nodes").Elements("node"))
+        foreach (var element in node.Elements("node"))
         {
             component.CreateNode(element);
         }

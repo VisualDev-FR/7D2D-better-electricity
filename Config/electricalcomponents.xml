@@ -1,26 +1,79 @@
 <electricalcomponents>
 
-    <component name="belec_powerswitch_01">
+    <component name="belec_powerSwitch99">
 
         <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
         <property name="PowerLoss" value="1" />
 
-        <nodes>
-            <node name="input" type="input" />
-            <node name="output" type="output" />
-        </nodes>
+        <node name="input" type="input" position="0,0,0" />
+        <node name="output" type="output" position="0,0,0" />
 
     </component>
 
-    <component name="belec_blockPowerSwitch">
+    <component name="belec_powerSwitch01">
 
         <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
         <property name="PowerLoss" value="1" />
 
-        <nodes>
-            <node name="input" type="input" position="0,0.1,-0.46" />
-            <node name="output" type="output" position="0,-0.5,-0.46" />
-        </nodes>
+        <node name="input" type="input" position="0,0.1,-0.46" />
+        <node name="output" type="output" position="0,-0.5,-0.46" />
+
+    </component>
+
+    <component name="belec_switch">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <node name="input" type="input" position="0,0,0" />
+        <node name="output" type="output" position="0,0,0" />
+
+    </component>
+
+    <component name="belec_generatorbank">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <node name="output" type="output" position="0.32,0.02,-0.08" />
+
+    </component>
+
+    <component name="belec_lightIndustrial">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <node name="input" type="input" position="0,-0.5,0.05" />
+
+    </component>
+
+    <component name="belec_lightIndustrialRed">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <node name="input" type="input" position="0,-0.5,0.05" />
+
+    </component>
+
+    <component name="belec_bladeTrap">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <node name="input" type="input" position="0,0,1" />
+        <node name="output" type="output" position="0,0,1" />
+
+    </component>
+
+    <component name="belec_autoTurret">
+
+        <property name="Class" value="ElectricalComponentPowerSwitch, BetterElectricity" />
+        <property name="PowerLoss" value="1" />
+
+        <node name="input" type="input" position="-0.08,0.37,-0.08" />
+        <node name="output" type="output" position="0.08,0.37,-0.08" />
 
     </component>
 

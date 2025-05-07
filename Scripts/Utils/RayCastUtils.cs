@@ -20,12 +20,12 @@ public static class RayCastUtils
 
     public static Vector3 CalcHitPos(WorldRayHitInfo hitInfo, float offset = 0)
     {
-        if (!hitInfo.bHitValid)
+        if (hitInfo.bHitValid)
         {
-            return Vector3.zero;
+            return hitInfo.hit.pos + faceToNormal[hitInfo.hit.blockFace] * offset;
         }
 
-        return hitInfo.hit.pos + faceToNormal[hitInfo.hit.blockFace] * offset;
+        return Vector3.zero;
     }
 
     public static Collider GetLookedAtCollider(EntityPlayer player, float distance = 4f)
@@ -40,7 +40,7 @@ public static class RayCastUtils
 
     public static T GetComponent<T>(EntityPlayer player, float distance = 4f) where T : class
     {
-        foreach (var hit in Physics.RaycastAll(player.GetLookRay(), distance))
+        foreach (RaycastHit hit in Physics.RaycastAll(player.GetLookRay(), distance))
         {
             if (hit.transform.GetComponent<T>() is T component)
             {

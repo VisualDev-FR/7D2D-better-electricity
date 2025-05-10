@@ -71,7 +71,7 @@
 
         <block name="belec_generatorbank">
 
-            <property name="Class" value="BlockElectricalSwitch, BetterElectricity" />
+            <property name="Class" value="BlockGeneratorV2, BetterElectricity" />
             <property name="CustomIcon" value="generatorbank" />
             <property name="CustomIconTint" value="200, 0, 0" />
 
@@ -85,7 +85,7 @@
             <property name="CustomIcon" value="generatorBankA" />
             <property name="DescriptionKey" value="powerSourceDesc" />
             <property name="DisplayType" value="blockElectricalHardened" />
-            <property name="Stacknumber" value="1" />
+            <property name="Stacknumber" value="500" />
             <property name="Material" value="Mmetal_medium" />
             <property name="Shape" value="ModelEntity" />
             <property name="Model" value="Entities/Electrical/generatorBankAPrefab" />

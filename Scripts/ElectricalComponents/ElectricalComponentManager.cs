@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class ElectricalComponentManager
     private readonly Dictionary<string, ElectricalComponent> nameToComponent = new Dictionary<string, ElectricalComponent>();
 
     private readonly List<ElectricalComponentInstance> spawnedComponents = new List<ElectricalComponentInstance>();
+
+    private readonly Dictionary<int, ElectricalComponentInstance> blockToComponentInstance = new Dictionary<int, ElectricalComponentInstance>();
 
     public ElectricalComponent GetComponent(string name)
     {
@@ -56,5 +59,26 @@ public class ElectricalComponentManager
         }
 
         spawnedComponents.Clear();
+    }
+
+    public ElectricalComponentInstance CreateComponent(Block block, Transform transform, Vector3i blockPos)
+    {
+        var componentInstance = ElectricalComponentInstance.Create(block, transform);
+
+        spawnedComponents.Add(componentInstance);
+        blockToComponentInstance[blockPos.GetHashCode()] = componentInstance;
+
+        return componentInstance;
+    }
+
+    public void RemoveComponent(Vector3i blockPos)
+    {
+        var hashcode = blockPos.GetHashCode();
+        var componentInstance = blockToComponentInstance[hashcode];
+
+        componentInstance.OnRemove();
+        componentInstance.Cleanup();
+
+        blockToComponentInstance.Remove(hashcode);
     }
 }

@@ -114,6 +114,8 @@ public class ElectricalComponentInstance : MonoBehaviour
         Component.OnSpawn(this);
     }
 
+    public virtual void OnRemove() { }
+
     public void ShowNodes(bool value)
     {
         foreach (var nodeInstance in nodeInstances)
